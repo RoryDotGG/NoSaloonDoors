@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/RoryDotGG/NoSaloonDoors/main/docs/banner.png" alt="NoSaloonDoors: Sunstone Valley Resort with its doorways open" width="100%">
+  <img src="docs/banner.png" alt="NoSaloonDoors: Sunstone Valley Resort with its doorways open" width="100%">
 </p>
 
 <p align="center">
