@@ -31,16 +31,19 @@ Any doorway prop a level places with `CustomConnectionObject` can go in `PrefabN
 
 ## How it works
 
-Sunstone Valley Resort (Desert in the game files) fills some doorways between rooms with a `CustomConnectionObject`, which spawns its door prefab in `Setup`. The saloon doors are `Level/Desert/Other/Saloon Doors`. The game only calls `Setup` on the host, or in singleplayer, where it spawns the door with `PhotonNetwork.InstantiateRoomObject`. So a Harmony prefix that skips `Setup` for the saloon doors leaves them out for every player.
+The saloon doors (`Level/Desert/Other/Saloon Doors`) reach a Sunstone Valley Resort level (Desert in the game files) in two ways, and the mod handles both.
 
-The prefix also marks the doorway as filled. When both rooms have a connector at the same doorway, the second one checks the first and removes itself if the first has spawned. Without the mark, it would spawn its own copy of the door.
+**Spawned at a doorway.** The Food Court fills its doorways with a `CustomConnectionObject`, which spawns its door prefab in `Setup`. The game only calls `Setup` on the host, or in singleplayer, where it spawns the door with `PhotonNetwork.InstantiateRoomObject`. So a Harmony prefix that skips `Setup` for the saloon doors leaves them out for every player. The prefix also marks the doorway as filled. When both rooms have a connector at the same doorway, the second one checks the first and removes itself if the first has spawned. Without the mark, it would spawn its own copy of the door.
 
-[GameLibs](https://www.nuget.org/packages/R.E.P.O.GameLibs.Steam) predates the Sunstone update, so `CustomConnectionObject` isn't in it. The patch finds the class by name at runtime, and logs a warning instead of patching on a game version without it.
+**Built into the room.** Most saloon doors are part of a room prefab, in shack walls (`…/Door 01 Frame/Saloon Doors`) and the start room's entrance, so they arrive with the room and there's no spawn to skip. Once the level has generated (a postfix on `LevelGenerator.GenerateDoneApply`), the host finds each `PhysGrabHinge` whose parent is named `Saloon Doors` and destroys it the way an enemy would. `DestroyHinge` marks it dead on every player, which clears the doorway's wall tag and sound muffling, then `DestroyObject` with effects off removes it without the crash and camera shake. Both go through the game's own RPCs, so players without the mod lose the doors too. Players with the mod also skip the burst of wood bits.
+
+[GameLibs](https://www.nuget.org/packages/R.E.P.O.GameLibs.Steam) predates the Sunstone update, so `CustomConnectionObject` and `GenerateDoneApply` aren't in it, and its `DestroyObject` has an older signature. The patches find these by name at runtime, and log a warning instead of patching on a game version without them.
 
 | File | Purpose |
 | --- | --- |
 | [`src/Plugin.cs`](https://github.com/RoryDotGG/NoSaloonDoors/blob/main/src/Plugin.cs) | Config and start-up |
-| [`src/SaloonDoorPatch.cs`](https://github.com/RoryDotGG/NoSaloonDoors/blob/main/src/SaloonDoorPatch.cs) | The `CustomConnectionObject.Setup` patch |
+| [`src/SaloonDoorPatch.cs`](https://github.com/RoryDotGG/NoSaloonDoors/blob/main/src/SaloonDoorPatch.cs) | The `CustomConnectionObject.Setup` patch, for spawned doors |
+| [`src/BakedDoorPatch.cs`](https://github.com/RoryDotGG/NoSaloonDoors/blob/main/src/BakedDoorPatch.cs) | Takes out doors built into rooms once the level has generated |
 | [`src/DoorFilter.cs`](https://github.com/RoryDotGG/NoSaloonDoors/blob/main/src/DoorFilter.cs) | Pure name matching (no Unity), covered by `tests/DoorFilterCheck` |
 
 ## Build

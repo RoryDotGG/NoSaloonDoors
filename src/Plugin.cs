@@ -31,7 +31,10 @@ public class Plugin : BaseUnityPlugin
         Names = DoorFilter.ParseNames(PrefabNames.Value);
         PrefabNames.SettingChanged += (_, _) => Names = DoorFilter.ParseNames(PrefabNames.Value);
 
-        new Harmony(Guid).PatchAll(typeof(SaloonDoorPatch));
+        var harmony = new Harmony(Guid);
+        harmony.PatchAll(typeof(SaloonDoorPatch));
+        harmony.PatchAll(typeof(BakedDoorPatch));
+        harmony.PatchAll(typeof(QuietDoorBreakPatch));
         Log.LogInfo($"{Name} {Version} loaded");
     }
 }
