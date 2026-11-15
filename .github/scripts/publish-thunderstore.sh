@@ -6,7 +6,7 @@ set -euo pipefail
 
 team=RoryDotGG
 community=repo
-categories='["mods", "quality-of-life", "ai-generated"]'
+categories='["mods", "quality-of-life", "serverside", "ai-generated"]'
 api=https://thunderstore.io/api/experimental
 
 zip=${1:?Usage: publish-thunderstore.sh <package zip>}
