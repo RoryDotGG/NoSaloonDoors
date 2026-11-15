@@ -1,0 +1,42 @@
+# Runs the door-name check and builds the package on every pull request and every push to main.
+# It only builds: nothing is published or uploaded.
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Check the door names
+        run: dotnet run --project tests/DoorFilterCheck
+
+      - name: Build
+        run: dotnet build -c Release
+
+      # Fails if manifest.json has a version_number of its own, or the version in NoSaloonDoors.csproj isn't three numbers.
+      - name: Build the package
+        run: dotnet build -c Release -t:ThunderstorePackage

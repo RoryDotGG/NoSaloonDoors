@@ -1,0 +1,8 @@
+{
+  "name": "NoSaloonDoors",
+  "website_url": "https://github.com/RoryDotGG/NoSaloonDoors",
+  "description": "Takes the saloon doors out of Sunstone Valley Resort, so those doorways are always open. Only the host needs it.",
+  "dependencies": [
+    "BepInEx-BepInExPack-5.4.2305"
+  ]
+}

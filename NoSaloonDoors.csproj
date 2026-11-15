@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>NoSaloonDoors</AssemblyName>
+    <RootNamespace>NoSaloonDoors</RootNamespace>
+    <!-- The only place to bump the version. The build writes it into Plugin.Version and the packaged manifest.json. -->
+    <Version>1.0.0</Version>
+    <Authors>Rory Durrant</Authors>
+    <RepositoryUrl>https://github.com/RoryDotGG/NoSaloonDoors</RepositoryUrl>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <DebugType>embedded</DebugType>
+    <RestoreAdditionalProjectSources>
+      https://api.nuget.org/v3/index.json;
+      https://nuget.bepinex.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
+    <!-- Set this (e.g. in Directory.Build.props) to auto-copy the DLL into a BepInEx profile. -->
+    <PluginsDir Condition="'$(PluginsDir)' == ''"></PluginsDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests/**" />
+  </ItemGroup>
+
+  <!-- GameLibs predates the Sunstone update, so it has no CustomConnectionObject. src/SaloonDoorPatch.cs finds it by name at runtime. -->
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" PrivateAssets="all" />
+    <PackageReference Include="R.E.P.O.GameLibs.Steam" Version="0.4.4-ngd.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Writes Version into BuildInfo.Version, which Plugin.Version reads. -->
+  <Target Name="GenerateBuildInfo" BeforeTargets="CoreCompile">
+    <Error Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(Version)', '^\d+\.\d+\.\d+$'))"
+           Text="Version '$(Version)' must be three numbers, e.g. 1.2.0. Thunderstore and BepInPlugin both need that form." />
+    <PropertyGroup>
+      <BuildInfoFile>$(IntermediateOutputPath)BuildInfo.g.cs</BuildInfoFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(BuildInfoFile)" Overwrite="true" WriteOnlyWhenDifferent="true"
+                      Lines="// &lt;auto-generated/&gt; Written from Version in NoSaloonDoors.csproj.;namespace NoSaloonDoors%3B;internal static class BuildInfo { public const string Version = &quot;$(Version)&quot;%3B }" />
+    <ItemGroup>
+      <Compile Include="$(BuildInfoFile)" />
+      <FileWrites Include="$(BuildInfoFile)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyToPlugins" AfterTargets="Build" Condition="'$(PluginsDir)' != ''">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PluginsDir)/NoSaloonDoors" />
+  </Target>
+
+  <!-- Thunderstore zip: dotnet build -c Release -t:ThunderstorePackage. Files sit at the zip root; mod managers put the DLL in BepInEx/plugins. -->
+  <Target Name="ThunderstorePackage" DependsOnTargets="Build">
+    <PropertyGroup>
+      <PackageStageDir>$(MSBuildProjectDirectory)/obj/package</PackageStageDir>
+      <PackageZip>$(MSBuildProjectDirectory)/dist/$(AssemblyName)-$(Version).zip</PackageZip>
+      <ManifestText>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)/manifest.json'))</ManifestText>
+      <!-- The repo's manifest.json has no version_number. Add it on the line after "name", with the same indent and line ending. -->
+      <StagedManifest>$([System.Text.RegularExpressions.Regex]::Replace($(ManifestText), '(?m)^([ \t]*)("name"[ \t]*:[ \t]*"[^"]*",)(\r?)$', '$1$2$3&#10;$1"version_number": "$(Version)",$3'))</StagedManifest>
+    </PropertyGroup>
+    <Error Condition="'$(Configuration)' != 'Release'" Text="Package a Release build: dotnet build -c Release -t:ThunderstorePackage" />
+    <Error Condition="$(ManifestText.Contains('version_number'))"
+           Text="Take version_number out of manifest.json. The package build adds it from Version in NoSaloonDoors.csproj." />
+    <Error Condition="!$(StagedManifest.Contains('&quot;version_number&quot;: &quot;$(Version)&quot;'))"
+           Text="Couldn't add version_number to the packaged manifest.json. It goes after the &quot;name&quot; line, which needs to end in a comma." />
+    <RemoveDir Directories="$(PackageStageDir)" />
+    <Copy SourceFiles="icon.png;README.md;CHANGELOG.md;LICENSE;$(TargetPath)" DestinationFolder="$(PackageStageDir)" />
+    <WriteLinesToFile File="$(PackageStageDir)/manifest.json" Lines="$([MSBuild]::Escape($(StagedManifest)))" Overwrite="true" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)/dist" />
+    <ZipDirectory SourceDirectory="$(PackageStageDir)" DestinationFile="$(PackageZip)" Overwrite="true" />
+    <Message Importance="high" Text="Thunderstore package: $(PackageZip)" />
+  </Target>
+</Project>

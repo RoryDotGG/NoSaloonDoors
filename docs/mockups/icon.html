@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- Thunderstore icon (256x256): a saloon doorway, crossed out. Render with docs/mockups/render.ps1. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="mockup.css">
+<style>
+  html, body { width: 256px; height: 256px; }
+  .hazard { position: absolute; left: 0; right: 0; height: 30px; background: repeating-linear-gradient(-45deg, #ffb31a 0 16px, #0d0d10 16px 32px); }
+  .name { position: absolute; left: 0; right: 0; top: 40px; text-align: center; font: 400 40px/1 "Bebas Neue", sans-serif; color: #ffb31a; letter-spacing: 0.5px; }
+  .doorway { --u: 7px; left: 72px; top: 84px; }
+  .no { left: 58px; top: 82px; width: 140px; height: 140px; }
+  .no circle, .no line { stroke-width: 11px; }
+</style>
+</head>
+<body>
+<div class="hazard" style="top:0"></div>
+<div class="hazard" style="bottom:0"></div>
+<div class="name">NO SALOON DOORS</div>
+<div class="doorway"><div class="arch"></div><div class="gap"></div><div class="leaf left"></div><div class="leaf right"></div></div>
+<svg class="no" viewBox="0 0 140 140"><circle cx="70" cy="70" r="60"/><line x1="28" y1="28" x2="112" y2="112"/></svg>
+</body>
+</html>

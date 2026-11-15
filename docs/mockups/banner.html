@@ -1,0 +1,38 @@
+<!doctype html>
+<!-- README banner (1280x640): the brand text on the left, a crossed-out saloon doorway on the right. Render with docs/mockups/render.ps1. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="mockup.css">
+<style>
+  html, body { width: 1280px; height: 640px; }
+  body { background: radial-gradient(circle at 80% 52%, rgba(255, 140, 20, 0.2), transparent 38%), #0d0d10; }
+  .hazard { position: absolute; left: 0; right: 0; height: 38px; background: repeating-linear-gradient(-45deg, #ffb31a 0 22px, #0d0d10 22px 44px); }
+  h1 { position: absolute; left: 76px; top: 96px; margin: 0; font: 400 136px/1 "Bebas Neue", sans-serif; color: #ffb31a; }
+  .sub { position: absolute; left: 80px; top: 230px; font: 400 52px/1 "Bebas Neue", sans-serif; color: #f3eee4; letter-spacing: 0.5px; }
+  ul { position: absolute; left: 80px; top: 318px; margin: 0; padding: 0; list-style: none; }
+  li { position: relative; padding-left: 28px; height: 53px; font: 400 37px/36px "Bebas Neue", sans-serif; color: #8e887e; letter-spacing: 0.5px; }
+  li::before { content: ""; position: absolute; left: 0; top: 10px; width: 14px; height: 14px; background: #ffb31a; }
+  .stack { position: absolute; left: 80px; top: 524px; font: 400 27px/1 "Bebas Neue", sans-serif; color: #5e5a54; letter-spacing: 1px; }
+  .doorway { --u: 17px; left: 888px; top: 150px; }
+  .no { left: 846px; top: 136px; width: 356px; height: 356px; }
+  .no circle, .no line { stroke-width: 26px; }
+</style>
+</head>
+<body>
+<div class="hazard" style="top:0"></div>
+<div class="hazard" style="bottom:0"></div>
+
+<h1>NO SALOON DOORS</h1>
+<div class="sub">SUNSTONE VALLEY RESORT, DOORWAYS OPEN</div>
+<ul>
+  <li>EVERY SALOON DOOR, GONE</li>
+  <li>THE RESORT'S OTHER DOORS STAY</li>
+  <li>ONLY THE HOST NEEDS IT</li>
+</ul>
+<div class="stack">BEPINEX&nbsp; / &nbsp;HARMONYX</div>
+
+<div class="doorway"><div class="arch"></div><div class="gap"></div><div class="leaf left"></div><div class="leaf right"></div></div>
+<svg class="no" viewBox="0 0 356 356"><circle cx="178" cy="178" r="152"/><line x1="71" y1="71" x2="285" y2="285"/></svg>
+</body>
+</html>

@@ -1,0 +1,28 @@
+/* Shared by the banner and icon. Bebas Neue for the brand text, as in MapVote++. */
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=block");
+
+html, body { margin: 0; overflow: hidden; background: #0d0d10; }
+/* Headless Chromium has a minimum window width, so lay out against the body rather than the viewport. */
+body { position: relative; }
+
+/* A saloon doorway: an adobe arch with two swinging leaves. Sized by --u (one unit), so the icon and banner share it. */
+.doorway { position: absolute; width: calc(var(--u) * 16); height: calc(var(--u) * 20); }
+.doorway .arch {
+  position: absolute; inset: 0; border-radius: calc(var(--u) * 8) calc(var(--u) * 8) 0 0;
+  background: #c98b52; box-shadow: inset 0 0 0 calc(var(--u) * 1.2) #a86c3a;
+}
+.doorway .gap {
+  position: absolute; left: calc(var(--u) * 2.4); right: calc(var(--u) * 2.4); top: calc(var(--u) * 2.4); bottom: 0;
+  border-radius: calc(var(--u) * 5.6) calc(var(--u) * 5.6) 0 0; background: #1d1612;
+}
+.doorway .leaf {
+  position: absolute; top: calc(var(--u) * 7); width: calc(var(--u) * 5.4); height: calc(var(--u) * 7.5);
+  background: repeating-linear-gradient(90deg, #7a4520 0 calc(var(--u) * 0.9), #5c3215 calc(var(--u) * 0.9) calc(var(--u) * 1.1));
+  border: calc(var(--u) * 0.35) solid #3d200c; box-sizing: border-box;
+}
+.doorway .leaf.left { left: calc(var(--u) * 2.6); border-radius: 0 calc(var(--u) * 2.2) 0 0; }
+.doorway .leaf.right { right: calc(var(--u) * 2.6); border-radius: calc(var(--u) * 2.2) 0 0 0; }
+
+/* The "no" sign over the doors. */
+.no { position: absolute; overflow: visible; }
+.no circle, .no line { fill: none; stroke: #e5402f; stroke-linecap: round; }
