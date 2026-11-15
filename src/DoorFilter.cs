@@ -24,4 +24,16 @@ internal static class DoorFilter
             string.Equals(prefabName, n, StringComparison.OrdinalIgnoreCase) ||
             string.Equals(leaf, n, StringComparison.OrdinalIgnoreCase));
     }
+
+    /// <summary>
+    /// Whether a door already in the level should be taken out, by the name of the GameObject holding its hinges.
+    /// Doors baked into a room keep the prefab's name (Saloon Doors). Spawned ones get Unity's " (Clone)" suffix.
+    /// </summary>
+    public static bool MatchesObjectName(string? objectName, string[] names)
+    {
+        var name = (objectName ?? "").Trim();
+        const string clone = "(Clone)";
+        if (name.EndsWith(clone, StringComparison.Ordinal)) name = name.Substring(0, name.Length - clone.Length).TrimEnd();
+        return name.Length > 0 && names.Any(n => string.Equals(name, n, StringComparison.OrdinalIgnoreCase));
+    }
 }

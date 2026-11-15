@@ -36,4 +36,14 @@ var both = ParseNames("Saloon Doors, Desert Adobe Door WC");
 Check(Matches("Desert Adobe Door WC", "Level/Desert/Other/Desert Adobe Door WC", both) && Matches("Saloon Doors", SaloonPath, both),
     "every listed name is left out");
 
+// ---- doors baked into rooms, matched by GameObject name ----
+
+// Most saloon doors are part of a room prefab (…/Door 01 Frame/Saloon Doors), not spawned by a connector.
+Check(MatchesObjectName("Saloon Doors", defaults), "matches a baked-in saloon door");
+Check(MatchesObjectName("Saloon Doors(Clone)", defaults) && MatchesObjectName("Saloon Doors (Clone)", defaults), "matches a spawned copy");
+Check(MatchesObjectName("saloon doors", defaults), "object matching ignores case");
+foreach (var name in new[] { "Hinge Left", "Door 01 Frame", "Desert Adobe Door", "Saloon Doors Frame", "Doors", "", null })
+    Check(!MatchesObjectName(name, defaults), $"leaves an object named '{name}' alone");
+Check(!MatchesObjectName("Saloon Doors", ParseNames("")), "an empty setting leaves every baked-in door");
+
 Console.WriteLine("all checks passed");
